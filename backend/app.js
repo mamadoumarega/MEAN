@@ -1,7 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+
+const Post = require('./models/post');
 
 const app = express();
+
+mongoose.connect("mongodb+srv://hamzaah:hamzamanliving93@cluster0.tf11d.mongodb.net/node-angular?retryWrites=true&w=majority")
+  .then(() => {
+    console.log('Connected to database!');
+  }).catch(() => {
+    console.log('Connection failed!');
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -20,37 +30,38 @@ app.use((req, res, next) => {
   next();
 });
 
+// Adding posts
 app.post("/api/posts", (req, res, next) => {
-  const post = req.body;
-  console.log(post);
-  res.status(201).send({
-    message: 'Post added successfully!'
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content
+  });
+  // Save the post
+  post.save().then(createdPost => {
+    res.status(201).send({
+      message: 'Post added successfully!',
+      createdPost: createdPost._id
+    });
   });
 });
 
+// Fetching all posts
 app.get("/api/posts",(req, res, next) => {
-
-  const posts = [
-    {
-      id: 'fadf123',
-      title: 'First server-side post',
-      content: 'First Content'
-    },
-    {
-      id: 'fadf124',
-      title: 'Second server-side post',
-      content: 'Second Content'
-    },
-    {
-      id: 'fadf125',
-      title: 'Third server-side post',
-      content: 'Third Content'
-    }
-  ];
-  res.status(200).json({
-    message: 'Posts fetched successfully!',
-    posts: posts
+  Post.find().then(documents => {
+    res.status(200).json({
+      message: 'Posts fetched successfully!',
+      posts: documents
+    });
   });
+});
+
+// Delete single post
+app.delete("/api/posts/:id", (req, res,next) => {
+  Post.deleteOne({_id: req.params.id}).then(result => {
+    console.log(result);
+    res.status(200).json({ message: 'Post deleted!'});
+  });
+
 });
 
 
