@@ -15,6 +15,7 @@ import {PostListComponent} from './posts/post-list/post-list.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {PostsService} from './posts/posts.service';
 import { HttpClientModule } from '@angular/common/http';
+import {MatProgressSpinner, MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
 
@@ -37,6 +38,7 @@ import { HttpClientModule } from '@angular/common/http';
     MatButtonModule,
     MatToolbarModule,
     MatExpansionModule,
+    MatProgressSpinnerModule,
     HttpClientModule
   ],
   providers: [],
